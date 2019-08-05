@@ -1,9 +1,25 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
 import Login from '@/views/login'
+import Home from '@/views/home'
+import Welcome from '@/views/welcome'
+import Article from '@/views/article'
+import NoFound from '@/views/404'
+
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [{
-    path: '/login', name: 'login', component: Login }]
+    path: '/login', name: 'login', component: Login },
+  {
+    path: '/',
+    // name: 'home',
+    component: Home,
+    children: [
+      { path: '/', name: 'welcome', component: Welcome },
+      { path: '/article', name: 'article', component: Article }
+
+    ]
+  }, { path: '*', name: '404', component: NoFound }
+  ]
 })
 export default router
