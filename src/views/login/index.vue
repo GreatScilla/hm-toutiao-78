@@ -6,16 +6,16 @@
 <!-- ref="form" 操作dom需要 -->
 <!-- :model="form" 绑定整个表单的数据对象 -->
 
-<el-form ref="longinForm" status-icon :model="longinForm" :rules="loginRules">
+<el-form ref="loginForm" status-icon :model="loginForm" :rules="loginRules">
   <!-- el-form-item 表单项 -->
   <el-form-item prop="mobile">
     <!-- 表单元素 -->
-    <el-input v-model="longinForm.mobile"  placeholder="请输入手机号"></el-input>
+    <el-input v-model="loginForm.mobile"  placeholder="请输入手机号"></el-input>
 
   </el-form-item>
   <el-form-item prop="code">
     <!-- 表单元素 -->
-    <el-input v-model="longinForm.code"  placeholder="请输入验证码" style="width:236px;margin-right:10px"></el-input>
+    <el-input v-model="loginForm.code"  placeholder="请输入验证码" style="width:236px;margin-right:10px"></el-input>
 <el-button>发送验证码</el-button>
   </el-form-item>
   <el-form-item><el-checkbox :value="true" >我已阅读并同意用户协议和隐私条款</el-checkbox></el-form-item>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import store from '@/store'
 export default {
   data () {
     var checkMobile = (rule, value, callback) => {
@@ -34,8 +35,8 @@ export default {
       callback()
     }
     return {
-      longinForm: {
-        mobile: '18419069803',
+      loginForm: {
+        mobile: '',
         code: '246810'
       },
       loginRules: {
@@ -49,17 +50,34 @@ export default {
   },
   methods: {
     login () {
-      this.$refs.longinForm.validate((valid) => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
-          this.$http.post(
-            'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
-            this.loginForm
-          ).then(res => {
+          // this.$http.post(
+          //   'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+          //   this.loginForm
+          //   // longinForm
+          // ).then(res => {
+          //   store.setUser(res.data.data)
+          //   this.$router.push('/')
+          // })
+          //   .catch(() => {
+          //     this.$message({
+          //       duration: 1000,
+          //       message: '手机号或验证码错误',
+          //       type: 'error'
+          //     })
+          //   })
+          try {
+            const { data: { data } } = await this.$http.post('authorizations', this.loginForm)
+            store.setUser(data)
             this.$router.push('/')
-          })
-            .catch(() => {
-              this.$message.error('手机号或验证码错误')
+          } catch (e) {
+            this.$message({
+              duration: 1000,
+              message: '手机号或验证码错误',
+              type: 'error'
             })
+          }
         }
       })
     }
