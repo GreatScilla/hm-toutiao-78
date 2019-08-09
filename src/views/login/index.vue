@@ -36,7 +36,7 @@ export default {
     }
     return {
       loginForm: {
-        mobile: '',
+        mobile: '18419069803',
         code: '246810'
       },
       loginRules: {
@@ -72,6 +72,7 @@ export default {
             store.setUser(data)
             this.$router.push('/')
           } catch (e) {
+            console.log(e)
             this.$message({
               duration: 1000,
               message: '手机号或验证码错误',
